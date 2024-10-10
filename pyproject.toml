@@ -16,7 +16,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-
+dependencies = [
+  "pyewts == 0.2.0"
+]
 [project.optional-dependencies]
 dev = [
     "pytest",
