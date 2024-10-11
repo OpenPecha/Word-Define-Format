@@ -1,12 +1,16 @@
 import csv
-import json
-import os
 from collections import defaultdict
+from WordDefine.utils import save_json,create_dir
 
 def csv_to_json(csv_file: str, json_file: str):
     """
-    Convert CSV data into JSON format by extracting word and definition pairs.
-    Handles multiple definitions for the same word by storing them in a list.
+    Convert a CSV file to JSON format, extracting word-definition pairs.
+    If a word has multiple definitions, they are stored in a list under the "definition" field.
+
+    Args:
+        csv_file (str): The path to the CSV file where each line contains a word and its definition separated by '|'.
+        json_file (str): The path where the resulting JSON file will be saved.
+    
     """
     # Create a dictionary to store words and their definitions
     word_dict = defaultdict(list)
@@ -30,21 +34,12 @@ def csv_to_json(csv_file: str, json_file: str):
             "definition": definitions  # Store definitions as a list
         })
 
-    # Ensure the directory exists before writing the JSON file
-    output_file_path = os.path.dirname(json_file)
-    if not os.path.exists(output_file_path):
-        os.makedirs(output_file_path)
-        print(f"Created directory: {output_file_path}")
-
-    # Write the result to a JSON file with the correct formatting
-    with open(json_file, 'w', encoding='utf-8') as json_output:
-        json.dump(result, json_output, ensure_ascii=False, indent=4)
 
     print(f"Data has been written to {json_file}")
 
 # Define the CSV file and output JSON file
 csv_file = 'data/input/Common Chinese-Tibetan-English Buddhist Terminology (only Tib-En, Cleaned).csv'  # Replace with the actual path to your CSV file
 json_file = 'data/output/Common_Chinese_Tibetan-English/Common_Chinese_Tibetan-English.json'
-
+create_dir(json_file)
 # Convert CSV to JSON
 csv_to_json(csv_file, json_file)

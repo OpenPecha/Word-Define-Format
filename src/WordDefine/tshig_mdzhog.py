@@ -1,11 +1,15 @@
-import json
 import pyewts
-import os 
+from WordDefine.utils import save_json,create_dir
 
 def text_to_word_definition_with_wylie_conversion(text_file: str, output_file: str):
     """
     Convert a text file with Wylie transliterated words and definitions to JSON format.
     Both the word and the definition are converted from Wylie to Unicode Tibetan script.
+
+    Args:
+        text_file (str): Path to the input text file containing words and definitions in Wylie format.
+        output_file (str): Path where the resulting JSON file will be saved.
+
     """
     converter = pyewts.pyewts()  # Wylie to Unicode converter
     word_dict = {}
@@ -34,9 +38,7 @@ def text_to_word_definition_with_wylie_conversion(text_file: str, output_file: s
     # Convert dictionary to the required JSON format
     result = [{"word": word, "definition": definitions} for word, definitions in word_dict.items()]
 
-    # Write the result to a JSON file
-    with open(output_file, 'w', encoding='utf-8') as json_file:
-        json.dump(result, json_file, ensure_ascii=False, indent=4)
+    save_json(result, filename=output_file) 
 
     print(f"Data has been written to {output_file}")
 
@@ -45,8 +47,6 @@ def text_to_word_definition_with_wylie_conversion(text_file: str, output_file: s
 # Example usage
 text_file = 'data/input/25-tshig-mdzod-chen-mo-Tib.txt'  # Replace with the actual path to your input text file
 output_file = 'data/output/25-tshig-mdzod-chen-mo-Tib/25-tshig-mdzod-chen-mo-Tib.json'  # Replace with the desired path for the output JSON file
-output_file_dir = os.path.dirname(output_file)
-if not os.path.exists(output_file_dir):
-    os.makedirs(output_file_dir)
+create_dir(output_file)
 # Convert the text file to JSON format
 text_to_word_definition_with_wylie_conversion(text_file, output_file)

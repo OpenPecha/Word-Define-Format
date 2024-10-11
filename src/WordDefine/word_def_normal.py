@@ -1,10 +1,14 @@
-import json
-import os
-
+from WordDefine.utils import save_json, create_dir
 def parse_line(line: str) -> dict:
     """
     Parse a single line of text to extract the word and its definition.
     The word is before the first occurrence of '༑', and the definition is after it.
+    Args:
+        line (str): A line of text containing the word and definition.
+
+    Returns:
+        dict: A dictionary with 'word' and 'definition' keys if parsing is successful.
+              Returns None if the line doesn't contain the expected format.
     """
     if '༑' in line:
         word, definition = line.split('༑', 1)
@@ -18,6 +22,11 @@ def text_to_json(input_file: str, output_file: str):
     """
     Parse the text file where each line contains a word and its definition,
     then convert it into a JSON format.
+
+    Args:
+        input_file (str): The path to the input text file.
+        output_file (str): The path to the output JSON file.
+
     """
     result = []
     
@@ -34,16 +43,11 @@ def text_to_json(input_file: str, output_file: str):
                 result.append(parsed_line)
     
     # Write the parsed result to a JSON file
-    with open(output_file, 'w', encoding='utf-8') as json_file:
-        json.dump(result, json_file, ensure_ascii=False, indent=4)
-    print(f"Data successfully written to {output_file}")
+    save_json(result, filename=output_file)
 
 # Define the file paths
 input_file = 'data/input/tibetan_dictionaries/37-དག་ཡིག་གསར་བསྒྲིགས།.txt'  # Replace with your actual text file
 output_file = 'data/output/37-དག་ཡིག་གསར་བསྒྲིགས།/37-དག་ཡིག་གསར་བསྒྲིགས།.json'
-output_file_dir = os.path.dirname(output_file)
-if not os.path.exists(output_file_dir):
-    os.makedirs(output_file_dir)
-
+create_dir(output_file)
 # Convert text to JSON
 text_to_json(input_file, output_file)

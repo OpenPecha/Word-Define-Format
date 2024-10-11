@@ -1,11 +1,16 @@
-import json
 import pyewts
-import os 
+from WordDefine.utils import save_json,create_dir
+
 def text_to_word_definition_with_wylie_conversion(text_file: str, output_file: str):
     """
-    Convert a text file to JSON format where each word is associated with its definition.
-    If a word has multiple definitions, they will be stored in a list.
-    Both words and definitions in Wylie transliteration are converted to Unicode Tibetan script using pyewts.
+    Converts a text file of Wylie transliterated word-definition pairs into JSON format, with both words and definitions 
+    converted from Wylie to Unicode Tibetan script.
+
+
+    Args:
+        text_file (str): Path to the input text file where each line contains a word and its definition separated by "|".
+        output_file (str): Path to the output JSON file where the result will be saved.
+    
     """
     word_dict = {}
     converter = pyewts.pyewts()  # Create the pyewts converter
@@ -40,9 +45,7 @@ def text_to_word_definition_with_wylie_conversion(text_file: str, output_file: s
     result = [{"word": word, "definition": definitions} for word, definitions in word_dict.items()]
 
     # Write the result to a JSON file
-    with open(output_file, 'w', encoding='utf-8') as json_file:
-        json.dump(result, json_file, ensure_ascii=False, indent=4)
-
+    save_json(result)
     print(f"Data has been written to {output_file}")
 
 
@@ -50,8 +53,6 @@ def text_to_word_definition_with_wylie_conversion(text_file: str, output_file: s
 # Example usage
 text_file = 'data/input/49-LokeshChandraTib.txt'  # Replace with the actual path to your input text file
 output_file = 'data/output/49-LokeshChandraTib/49-LokeshChandraTib.json'  # Replace with the desired path for the output JSON file
-output_file_dir = os.path.dirname(output_file)
-if not os.path.exists(output_file_dir):
-    os.makedirs(output_file_dir)
+create_dir(output_file)
 # Convert the text file to JSON format
 text_to_word_definition_with_wylie_conversion(text_file, output_file)

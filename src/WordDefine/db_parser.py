@@ -1,12 +1,15 @@
 import sqlite3
-import json
 from collections import defaultdict
-import os
-
+from WordDefine.utils import save_json,create_dir
 def db_to_json(db_file: str, output_file: str):
     """
-    Convert database data into JSON format by extracting EnWord (word) and TbDef (definition).
-    Handles multiple definitions by storing them in a list.
+    Convert a SQLite database table to JSON format by extracting word-definition pairs from the columns 'tb_key' and 'def_dic'.
+    Multiple definitions for the same word are stored in a list.
+
+    Args:
+        db_file (str): The path to the SQLite database file.
+        output_file (str): The path where the resulting JSON file will be saved.
+    
     """
     # Connect to the SQLite database
     conn = sqlite3.connect(db_file)
@@ -37,10 +40,7 @@ def db_to_json(db_file: str, output_file: str):
             "definition": definitions  # Keep definitions as a list
         })
 
-    # Write the result to a JSON file with the correct formatting
-    with open(output_file, 'w', encoding='utf-8') as json_file:
-        json.dump(result, json_file, ensure_ascii=False, indent=4)
-
+    save_json(result, filename=output_file)
     # Close the database connection
     conn.close()
 
@@ -48,9 +48,7 @@ def db_to_json(db_file: str, output_file: str):
 # Define the SQLite DB file and output JSON file
 db_file = 'data/input/dictionarys/Tb_En_Dic.db'  # Replace with the actual path to your SQLite database
 output_file = 'data/output/Tb_En_Dic/Tb_En_Dic.json'
-output_file_path = os.path.dirname(output_file)
-if not os.path.exists(output_file_path):
-    os.makedirs(output_file_path)
+create_dir(output_file)
 
 # Convert DB to JSON
 db_to_json(db_file, output_file)

@@ -1,7 +1,6 @@
 import sqlite3
-import json
 from collections import defaultdict
-import os
+from WordDefine.utils import create_dir,save_json
 
 def db_to_json(db_file: str, output_file: str):
     """
@@ -9,6 +8,11 @@ def db_to_json(db_file: str, output_file: str):
     - 'word' is a list of values from the SpCn (second column) and TdCn (third column).
     - 'definition' is a list of definitions from SpCnDf (fifth column).
     If multiple definitions exist for the same word, they are aggregated in the 'definition' list.
+
+    Args:
+        db_file (str): The path to the SQLite database file.
+        output_file (str): The path where the resulting JSON file will be saved.
+
     """
     # Connect to the SQLite database
     conn = sqlite3.connect(db_file)
@@ -53,9 +57,7 @@ def db_to_json(db_file: str, output_file: str):
             "definition": definitions  # Keep definitions as a list
         })
 
-    # Write the result to a JSON file with the correct formatting
-    with open(output_file, 'w', encoding='utf-8') as json_file:
-        json.dump(result, json_file, ensure_ascii=False, indent=4)
+    save_json(result, filename=output_file)
 
     # Close the database connection
     conn.close()
@@ -65,9 +67,7 @@ def db_to_json(db_file: str, output_file: str):
 # Define the SQLite DB file and output JSON file
 db_file = 'data/input/dictionarys/CnTbDic2022.db'  # Replace with the actual path to your SQLite database
 output_file = 'data/output/CnTbDic2022/CnTbDic2022.json'
-output_file_path = os.path.dirname(output_file)
-if not os.path.exists(output_file_path):
-    os.makedirs(output_file_path)
+create_dir(output_file)
 
 # Convert DB to JSON with multiple definitions handling
 db_to_json(db_file, output_file)  # You can change the delimiter if needed
